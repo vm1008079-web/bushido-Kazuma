@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bushido | Acceso</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="stylesheet" href="/themes/bushido/default.css">
+    <script src="/themes/bushido/scripts/common.js" defer></script>
+</head>
+<body>
+
+    <div id="safety-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999;"></div>
+    <div class="waves-bg"></div>
+
+    <div class="w-full max-w-md text-left mb-6 px-2 flex items-center gap-4 z-10 relative" style="margin: 20px auto 0; justify-content: center;">
+        <div class="brand-icon" style="width:50px; height:50px; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); background: linear-gradient(135deg, var(--bushido-red), var(--bushido-gold)); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.5rem;">⚔️</div>
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2" style="font-family: 'Noto Serif JP', serif;">Kazuma <span style="color: var(--bushido-red);">Bushido</span></h1>
+            <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Accede al camino del guerrero</p>
+        </div>
+    </div>
+
+    <div class="login-card" style="max-width: 450px; margin: 0 auto;">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold" style="font-family: 'Noto Serif JP', serif;">⚔️ Iniciar sesión</h2>
+            <p class="text-xs text-slate-400 mt-1">Ingresa tus credenciales</p>
+        </div>
+
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-2">Correo electrónico</label>
+                <input type="email" id="email" class="input-kazuma" placeholder="tu@ejemplo.com" required>
+            </div>
+
+            <div class="relative">
+                <label class="block text-xs font-medium text-slate-400 mb-2">Contraseña</label>
+                <input type="password" id="password" class="input-kazuma" placeholder="••••••••" required>
+                <i class="fas fa-eye absolute right-4 top-[46px] cursor-pointer text-slate-500 hover:text-slate-300 transition" onclick="togglePassword('password', this)"></i>
+            </div>
+
+            <div class="flex items-center justify-between px-1">
+                <label class="flex items-center gap-2 text-xs font-medium text-slate-400 cursor-pointer">
+                    <input type="checkbox" class="accent-red-700 w-4 h-4 rounded border-none bg-slate-800">
+                    Recordar sesión
+                </label>
+            </div>
+
+            <div class="g-recaptcha" data-sitekey="6Lcz9dwsAAAAAMJ3mdr0wYqws6j7eys_hNdMDKcj" data-theme="dark"></div>
+
+            <button type="submit" id="btnSubmit" class="btn-purple">
+                <i class="fas fa-fist-raised mr-2"></i> Acceder
+            </button>
+        </form>
+
+        <div class="relative flex py-5 items-center">
+            <div class="flex-grow border-t border-white/[0.03]"></div>
+            <span class="flex-shrink mx-4 text-slate-500 text-[9px] font-bold tracking-widest uppercase">O continúa con</span>
+            <div class="flex-grow border-t border-white/[0.03]"></div>
+        </div>
+
+        <div class="w-full mb-6">
+            <a href="https://rest.kazuma.giize.com/api/auth/github" class="btn-github-oauth" style="background:#1e1e2a; border:1px solid var(--bushido-red); color:var(--bushido-text); display:flex; align-items:center; justify-content:center; gap:10px; padding:10px; clip-path: polygon(0% 0%, 100% 0%, 98% 100%, 0% 100%);">
+                <i class="fab fa-github text-lg"></i> GitHub
+            </a>
+        </div>
+
+        <div class="flex justify-center items-center text-xs font-medium border-t border-white/[0.03] pt-5">
+            <a href="/register" class="text-purple-400 hover:underline">⚔️ ¿Nuevo guerrero? Crea tu cuenta</a>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center z-10 relative" style="margin-bottom: 20px;">
+        <a href="/terms" class="text-xs font-semibold text-slate-600 hover:text-slate-400 transition underline decoration-dotted">Condiciones del servicio</a>
+    </div>
+
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        (async function initialCheck() {
+            const cookieApiKey = getCookie('apiKey');
+            if (cookieApiKey) {
+                document.getElementById('safety-overlay').style.display = 'block';
+                try {
+                    const res = await fetch(`/api/auth/me?apiKey=${cookieApiKey}`);
+                    const data = await res.json();
+                    if (data.status) {
+                        localStorage.setItem('kazuma_user', JSON.stringify(data.data));
+                        document.cookie = "apiKey=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                        window.location.href = '/dash';
+                        return;
+                    }
+                } catch (e) {}
+                document.getElementById('safety-overlay').style.display = 'none';
+            }
+            const user = localStorage.getItem('kazuma_user');
+            if (user) {
+                window.location.href = '/dash';
+            } else {
+                document.getElementById('safety-overlay').style.display = 'none';
+            }
+        })();
+
+        function togglePassword(id, el) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                el.classList.remove("fa-eye");
+                el.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                el.classList.remove("fa-eye-slash");
+                el.classList.add("fa-eye");
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse) {
+                Swal.fire({ title: 'Seguridad', text: 'Resuelve el CAPTCHA', icon: 'warning', background: 'var(--bushido-card)', color: 'var(--bushido-text)' });
+                return;
+            }
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Verificando...';
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        captcha: captchaResponse
+                    })
+                });
+                const data = await res.json();
+                if (data.status) {
+                    localStorage.setItem('kazuma_user', JSON.stringify(data.data));
+                    document.getElementById('safety-overlay').style.display = 'block';
+                    window.location.href = '/dash';
+                } else {
+                    throw new Error(data.message || "Error de autenticación");
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', background: 'var(--bushido-card)', color: 'var(--bushido-text)' });
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-fist-raised mr-2"></i> Acceder';
+                grecaptcha.reset();
+            }
+        });
+    </script>
+</body>
+</html>

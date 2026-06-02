@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bushido | Kazuma API</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lfw-dwsAAAAACc6y5K4sfFnplSqbskYPia1ADh5" defer></script>
+    <link rel="stylesheet" href="/themes/bushido/default.css">
+    <script src="/themes/bushido/scripts/common.js" defer></script>
+    <script src="/themes/bushido/scripts/dashboard.js" defer></script>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="spinner"></div>
+        <div class="loading-text">Despertando al guerrero...</div>
+    </div>
+
+    <div class="waves-bg"></div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-trigger" onclick="toggleMenu()"><i class="fas fa-bars-staggered"></i></div>
+            <div class="brand">KAZUMA <span>⚔️ 侍</span></div>
+        </div>
+        <div class="header-right">
+            <div class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+                <i class="fas fa-moon"></i>
+            </div>
+            <div class="profile-trigger" onclick="toggleDropdown(event)">
+                <img id="avatar-trigger-img" src="https://files.catbox.moe/9ssbf9.jpg" alt="User">
+            </div>
+        </div>
+    </header>
+
+    <div class="profile-dropdown" id="profile-dropdown">
+        <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+        <a href="/notifications" class="dropdown-item"><i class="fas fa-bell"></i> Notificaciones</a>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-left: 10px;">
+            <span style="font-weight: 800; font-size: 0.9rem; color: var(--bushido-gold);">⚔️ BUSHIDO</span>
+            <i class="fas fa-times menu-trigger" onclick="toggleMenu()" style="font-size: 1.1rem;"></i>
+        </div>
+        <div id="admin-nav" style="display:none;">
+            <p class="nav-category">Consejo de Guerra</p>
+            <a href="/admin" class="sidebar-link" style="color: var(--bushido-red);"><i class="fas fa-user-shield"></i> Panel Admin</a>
+        </div>
+        <p class="nav-category">General</p>
+        <div class="sidebar-link active" onclick="toggleMenu()"><i class="fas fa-home"></i> Dashboard</div>
+        <p class="nav-category">Servicios</p>
+        <a href="/endpoints/search" class="sidebar-link"><i class="fas fa-search"></i> Buscar</a>
+        <a href="/endpoints/tools" class="sidebar-link"><i class="fas fa-tools"></i> Herramientas</a>
+        <a href="/endpoints/download" class="sidebar-link"><i class="fas fa-download"></i> Descargas</a>
+        <a href="/endpoints/ai" class="sidebar-link"><i class="fas fa-robot"></i> IA</a>
+        <div class="sidebar-link" onclick="logout()" style="margin-top: 30px; color: #ef4444; cursor: pointer;"><i class="fas fa-power-off"></i> Desconectar</div>
+    </nav>
+
+    <div class="container" id="content-area"></div>
+
+    <%- include('partials/footer.html') %>
+
+    <script>
+        // Pequeño script de inicio que llama a loadDash() después de verificar auth
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof checkAuth === 'function') {
+                const user = checkAuth(true);
+                if (user && typeof loadDash === 'function') {
+                    loadDash();
+                }
+            } else {
+                console.error('Funciones comunes no cargadas');
+            }
+        });
+    </script>
+</body>
+</html>

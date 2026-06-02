@@ -1,0 +1,14 @@
+{
+  "themeName": "Bushido",
+  "version": "2.0.0",
+  "description": "Tema samurái oscuro con elementos de tinta, oro y estética japonesa auténtica. Diseñado para inyección como plugin.",
+  "author": "VictorOW",
+  "license": "MIT",
+  "settings": {
+    "primaryColor": "#8B1A1A",
+    "backgroundColor": "#11100F",
+    "accentColor": "#D4AF37",
+    "fontFamily": "'Noto Serif JP', 'Inter', sans-serif",
+    "injectionPoint": "after-header"
+  }
+}
